@@ -37,6 +37,13 @@ $(OUTPUT): $(OBJS)
 	$(info Target: $@)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
+# For testing purposes
+# make main.weirdtype will require main.cpp for example
+%.weirdtype: %.cpp
+	$(info Every Dependency: $^)
+	$(info First Dependency: $<)
+	$(info Target: $@)
+
 clean:
 	rm *.out
 	rm *.o
