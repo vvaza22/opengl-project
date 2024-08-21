@@ -1,56 +1,79 @@
-# Compiler variables. The name CXX is used for C++ compiler and CC for C compiler
+# Directories
+SRC_DIR = src
+BUILD_DIR = build
+TEST_DIR = tests
+INCLUDE_DIR = include
+
+# Compiler
 CXX = g++
-CXXFLAGS = -Wall -g
+CXXFLAGS = -std=c++17 -Wall -g -I$(INCLUDE_DIR)
+# Linker flags only for testing
+# main() for tests is included inside lgtest_main
+TEST_LDFLAGS = -pthread -lgtest -lgtest_main
 
-# Compiled output file name
-OUTPUT = program.out
+# Entry point for the application
+MAIN_SRC = $(SRC_DIR)/main.cpp
+MAIN_OBJ = $(MAIN_SRC:$(SRC_DIR)/%.cpp=$(BUILD_DIR)/%.o)
 
-# Important!
-# $(...) syntax is used to reference to variables and call functions
-# ${...} is same as $(...) probably...
+# Find every cpp file in the source directory
+SRCS = $(shell find $(SRC_DIR) -name '*.cpp')
 
-# Space delimited list of every cpp file
-SRCS = $(wildcard *.cpp) # Call function wildcard with argument *.cpp
-# Example result:
-# SRCS = main.cpp shader.cpp camera.cpp
+# Exclude main.cpp from sources
+SRCS := $(filter-out $(MAIN_SRC), $(SRCS))
 
-# This is a replace syntax. $(var:suffix=replacement)
-OBJS = $(SRCS:.cpp=.o)
+# We need to create object files for each cpp file in the build directory(except for main.cpp)
+OBJS = $(SRCS:$(SRC_DIR)/%.cpp=$(BUILD_DIR)/%.o)
 
-# Another example
-TESTSRCS = main.cpp.cpp sha.cppder.cpp camera.cpp vertex.cppder
-TESTOBJS = $(TESTSRCS:.cpp=.o)
+# Find every test file
+# Test files must end with _test.cpp
+TEST_SRCS = $(shell find $(TEST_DIR) -name '*_test.cpp')
 
-# Take OBJS files and produce OUTPUT file
-# If OBJS = main.o camera.o shader.o, these are dependencies for output
-# $^ means dependencies i.e. .o files and $@ means target file, i.e. output
-# Full syntax will expand to g++ -Wall -g main.o camera.o shader.o -o program.out
-$(OUTPUT): $(OBJS)
-	$(CXX) $(CXXFLAGS) $^ -o $@
+# Create objects for each test
+# Actual source file will be compiled into myfile.o and test file into myfile_test.o in the same folder
+TEST_OBJS = $(TEST_SRCS:$(TEST_DIR)/%.cpp=$(BUILD_DIR)/%.o)
 
-# %.o means any file that ends with .o
-# So if we want to make a file that ends with .o for example myfile.o you need to use myfile.cpp as a dependency
-# $< means first dependency
-%.o: %.cpp
-	$(info Every Dependency: $^)
-	$(info First Dependency: $<)
-	$(info Target: $@)
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+# Executable file location
+TARGET = $(BUILD_DIR)/main.out
 
-# For testing purposes
-# make main.weirdtype will require main.cpp for example
-%.weirdtype: %.cpp
-	$(info Every Dependency: $^)
-	$(info First Dependency: $<)
-	$(info Target: $@)
+# Executable file that runs tests
+TEST_RUNNER_TARGET = $(BUILD_DIR)/test_runner.out
 
+# Build everything but don't run
+all: $(TARGET)
+
+# make run to build the application and run
+run: $(TARGET)
+	./$(TARGET)
+
+# Build the application and tests and then run the tests
+test: $(TEST_RUNNER_TARGET)
+	./$(TEST_RUNNER_TARGET)
+
+# Delete build directory
 clean:
-	rm *.out
-	rm *.o
+	rm -rf $(BUILD_DIR)
 
-# This syntax is used to print debug information
-debug:
-	$(info Value of SRCS is equal to: $(SRCS))
-	$(info Value of OBJS is equal to: $(OBJS))
-	$(info Value of TESTSRCS is equal to: $(TESTSRCS))
-	$(info Value of TESTOBJS is equal to: $(TESTOBJS))
+########################### SOURCE ###########################
+
+# Build the executable file
+$(TARGET): $(MAIN_OBJ) $(OBJS)
+	$(CXX) $(CXXFLAGS) $^ $(LDFLAGS) -o $@
+
+# Build object file for each cpp file
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
+	@mkdir -p $(dir $@)
+	$(CXX) $(CXXFLAGS) -c $< $(LDFLAGS) -o $@
+
+########################### TESTS ###########################
+
+# Build the test_runner (LDFLAGS ORDER MATTERS)
+$(TEST_RUNNER_TARGET): $(OBJS) $(TEST_OBJS)
+	$(CXX) $(CXXFLAGS) $^ $(TEST_LDFLAGS) -o $@
+
+# Build object files for tests
+$(BUILD_DIR)/%_test.o: $(TEST_DIR)/%_test.cpp
+	@mkdir -p $(dir $@)
+	$(CXX) $(CXXFLAGS) -c $< $(TEST_LDFLAGS) -o $@
+
+# Tell make that these are labels and not actual files
+.PHONY: all run test clean
