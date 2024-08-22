@@ -1,12 +1,16 @@
+# TODO: When changing .hpp files Makefile does not recompile objects. Can lead to confusion
+
 # Directories
 SRC_DIR = src
 BUILD_DIR = build
 TEST_DIR = tests
 INCLUDE_DIR = include
+GLSL_DIR = $(SRC_DIR)/glsl
 
 # Compiler
 CXX = g++
 CXXFLAGS = -std=c++17 -Wall -g -I$(INCLUDE_DIR)
+LDFLAGS = -lglfw3 -lGL -lX11 -lpthread -lXrandr -lXi -ldl -lm -lglm
 # Linker flags only for testing
 # main() for tests is included inside lgtest_main
 TEST_LDFLAGS = -pthread -lgtest -lgtest_main
@@ -32,18 +36,23 @@ TEST_SRCS = $(shell find $(TEST_DIR) -name '*_test.cpp')
 # Actual source file will be compiled into myfile.o and test file into myfile_test.o in the same folder
 TEST_OBJS = $(TEST_SRCS:$(TEST_DIR)/%.cpp=$(BUILD_DIR)/%.o)
 
+# List of .glsl files
+GLSL_SRCS = $(shell find $(GLSL_DIR) -name '*.glsl')
+GLSL_BUILD = $(GLSL_SRCS:$(SRC_DIR)/%.glsl=$(BUILD_DIR)/%.glsl)
+
 # Executable file location
-TARGET = $(BUILD_DIR)/main.out
+TARGET_FILE_NAME = main.out
+TARGET = $(BUILD_DIR)/$(TARGET_FILE_NAME)
 
 # Executable file that runs tests
 TEST_RUNNER_TARGET = $(BUILD_DIR)/test_runner.out
 
 # Build everything but don't run
-all: $(TARGET)
+all: $(TARGET) $(GLSL_BUILD)
 
 # make run to build the application and run
-run: $(TARGET)
-	./$(TARGET)
+run: $(TARGET) $(GLSL_BUILD)
+	cd $(BUILD_DIR) && ./$(TARGET_FILE_NAME)
 
 # Build the application and tests and then run the tests
 test: $(TEST_RUNNER_TARGET)
@@ -63,6 +72,10 @@ $(TARGET): $(MAIN_OBJ) $(OBJS)
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
 	@mkdir -p $(dir $@)
 	$(CXX) $(CXXFLAGS) -c $< $(LDFLAGS) -o $@
+
+$(BUILD_DIR)/%.glsl: $(SRC_DIR)/%.glsl
+	@mkdir -p $(dir $@)
+	cp $< $@
 
 ########################### TESTS ###########################
 

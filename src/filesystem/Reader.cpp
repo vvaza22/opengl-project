@@ -21,7 +21,8 @@ std::string filesystem::ReadTextFile(const std::string& filePath) {
 		return oss.str();
 	} catch(std::ifstream::failure& e) {
 		std::ostringstream errorMsg;
-		errorMsg << "could not open file: " << filePath << " error: " << e.what();
+		errorMsg << "Error: Could not read file " << filePath << " " << e.what();
+
 		throw std::runtime_error(errorMsg.str());
 	}
 }
