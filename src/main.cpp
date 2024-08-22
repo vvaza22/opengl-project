@@ -6,9 +6,11 @@
 
 #include <shader/ShaderProgram.hpp>
 #include <shader/ShaderFactory.hpp>
+#include <model/Model.hpp>
+#include <model/ModelFactory.hpp>
 
-const int WINDOW_WIDTH = 1366;
-const int WINDOW_HEIGHT = 768;
+const int WINDOW_WIDTH = 640;
+const int WINDOW_HEIGHT = 480;
 const char* WINDOW_TITLE = "MY AMAZING WINDOW";
 
 void InitProgram() {
@@ -28,17 +30,41 @@ void WindowResizeCallback(GLFWwindow* window, int width, int height) {
 }
 
 GLFWwindow* CreateWindow() {
-	GLFWwindow* window =
-		glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE, glfwGetPrimaryMonitor(), nullptr);
+	//glfwGetPrimaryMonitor()
+	GLFWwindow* window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE, nullptr, nullptr);
 
 	// Handle window resize
 	glfwSetFramebufferSizeCallback(window, WindowResizeCallback);
 
-	// glfwSetKeyCallback(window, key_callback);
-	// glfwSetCursorPosCallback(window, mouse_callback);  
-	// glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);  
+	//glfwSetKeyCallback(window, key_callback);
+	//glfwSetCursorPosCallback(window, mouse_callback);  
+	//glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);  
 
 	return window;
+}
+
+void MainLoop(GLFWwindow* window) {
+	ShaderFactory shaderFactory;
+	ModelFactory modelFactory;
+
+	ShaderProgram* program = 
+		shaderFactory.CreateShaderProgram("glsl/test/vertex.glsl", "glsl/test/fragment.glsl");
+	Model* model = modelFactory.CreateModel("data/model/triangle.obj");
+
+	while(!glfwWindowShouldClose(window)) {
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT);
+
+		glUseProgram(program->GetID());
+		glBindVertexArray(model->VertexArrayID());
+		glDrawArrays(GL_TRIANGLES, 0, 3);
+
+		glfwSwapBuffers(window);
+		glfwPollEvents();
+	}
+
+	delete model;
+	delete program;
 }
 
 int main() {
@@ -57,11 +83,7 @@ int main() {
 		exit(1);
 	}
 
-	ShaderFactory shaderFactory;
-	ShaderProgram* program = 
-		shaderFactory.CreateShaderProgram("glsl/test/vertex.glsl", "glsl/test/fragment.glsl");
-	
-	delete program;
+	MainLoop(window);
 
 	// Free resources
 	glfwTerminate();

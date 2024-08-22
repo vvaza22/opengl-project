@@ -67,6 +67,8 @@ clean:
 # Build the executable file
 $(TARGET): $(MAIN_OBJ) $(OBJS)
 	$(CXX) $(CXXFLAGS) $^ $(LDFLAGS) -o $@
+	rm -rf $(BUILD_DIR)/data
+	cp -r data $(BUILD_DIR)/data
 
 # Build object file for each cpp file
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
