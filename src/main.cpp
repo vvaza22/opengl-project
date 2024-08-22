@@ -55,9 +55,8 @@ void MainLoop(GLFWwindow* window) {
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		glUseProgram(program->GetID());
-		glBindVertexArray(model->VertexArrayID());
-		glDrawArrays(GL_TRIANGLES, 0, 3);
+		program->use();
+		model->draw();
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();

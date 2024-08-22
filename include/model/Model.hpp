@@ -13,9 +13,12 @@ public:
     return vertexArrayObjectID;
   }
 
+  void draw();
+
 private:
   GLuint vertexArrayObjectID;
   GLuint vertexBufferObjectID;
+  int length;
 
   // VAO
   void createVertexArrayObject();

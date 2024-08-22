@@ -2,6 +2,8 @@
 #include <iostream>
 
 Model::Model(FloatArray* array) {
+  length = array->Length();
+
   // Vertex Array Object (VAO) remembers how calls are made to VBO
   // next time we need to use the model, we can just bind the VAO and VBO will be automatically bound
   createVertexArrayObject();
@@ -18,6 +20,7 @@ Model::Model(FloatArray* array) {
   // Send the data to GPU
   sendDataToVertexBufferObject(array->Length(), array->Ptr());
 
+  // Safe because vertex attributes are already bound
   unbindVertexBufferObject();
 
   // Unbind VAO and end recording
@@ -30,6 +33,20 @@ Model::~Model() {
 
   GLuint VBO = this->vertexBufferObjectID;
   glDeleteBuffers(1, &VBO);
+}
+
+void Model::draw() {
+  // Bind vertex array object, this will automatically bind VBO and vertex attributes
+  bindVertexArrayObject();
+
+  // Calculate how many vertices there are (assuming each vertex needs 3 coordinates)
+  int vertices = length / 3;
+
+  // Draw vertices from vertex arary
+  // Each element in vertex array is a collection of vertex attributes(we have only 1 vertex attribute in this case)
+  glDrawArrays(GL_TRIANGLES, 0, vertices);
+
+  unbindVertexArrayObject();
 }
 
 void Model::createVertexArrayObject() {

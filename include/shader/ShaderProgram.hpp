@@ -9,6 +9,7 @@ public:
   ShaderProgram(VertexShader* v, FragmentShader* f);
   ~ShaderProgram();
 
+  void use();
   GLuint GetID() {
     return shaderProgramID;
   }

@@ -19,6 +19,10 @@ void ShaderProgram::create() {
   shaderProgramID = glCreateProgram();
 }
 
+void ShaderProgram::use() {
+  glUseProgram(shaderProgramID);
+}
+
 void ShaderProgram::attach(Shader* shader) {
   glAttachShader(shaderProgramID, shader->GetID());
 }
