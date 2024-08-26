@@ -4,6 +4,10 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 #include <shader/ShaderProgram.hpp>
 #include <shader/ShaderFactory.hpp>
 #include <model/Model.hpp>
@@ -49,20 +53,33 @@ void MainLoop(GLFWwindow* window) {
 
 	ShaderProgram* program = 
 		shaderFactory.CreateShaderProgram("glsl/test/vertex.glsl", "glsl/test/fragment.glsl");
-	Model* model = modelFactory.CreateModel("data/model/triangle.obj");
+	Model* shape = modelFactory.CreateModel("data/model/cube.obj");
+
+	glEnable(GL_DEPTH_TEST);
+
+	glm::mat4 model = glm::mat4(1.0f);
+	glm::mat4 view = glm::mat4(1.0f);
+	glm::mat4 projection = glm::mat4(1.0f);
+
+	model = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+	view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+	projection = glm::perspective(glm::radians(45.0f), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 0.1f, 100.0f);
 
 	while(!glfwWindowShouldClose(window)) {
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		program->use();
-		model->draw();
+		program->SetMat4("model", model);
+		program->SetMat4("view", view);
+		program->SetMat4("projection", projection);
+		shape->draw();
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
 
-	delete model;
+	delete shape;
 	delete program;
 }
 

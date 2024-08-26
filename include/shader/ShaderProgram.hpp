@@ -3,6 +3,7 @@
 
 #include <shader/VertexShader.hpp>
 #include <shader/FragmentShader.hpp>
+#include <glm/glm.hpp>
 
 class ShaderProgram {
 public:
@@ -14,6 +15,8 @@ public:
     return shaderProgramID;
   }
 
+  void SetMat4(const char* name, const glm::mat4& mat);
+
 protected:
   void create();
   void attach(Shader* shader);
@@ -21,6 +24,7 @@ protected:
 
 private:
   GLuint shaderProgramID;
+  GLint getLoc(const char* name) const;
 };
 
 #endif

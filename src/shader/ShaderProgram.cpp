@@ -1,6 +1,7 @@
 #include <shader/VertexShader.hpp>
 #include <shader/FragmentShader.hpp>
 #include <shader/ShaderProgram.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #include <sstream>
 
@@ -25,6 +26,15 @@ void ShaderProgram::use() {
 
 void ShaderProgram::attach(Shader* shader) {
   glAttachShader(shaderProgramID, shader->GetID());
+}
+
+void ShaderProgram::SetMat4(const char* name, const glm::mat4& mat) {
+  // 3rd argument is transpose, don't transpose the matrix
+  glUniformMatrix4fv(getLoc(name), 1, GL_FALSE, glm::value_ptr(mat));
+}
+
+GLint ShaderProgram::getLoc(const char* name) const {
+  return glGetUniformLocation(shaderProgramID, name);
 }
 
 void ShaderProgram::link() {
