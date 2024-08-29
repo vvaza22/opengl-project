@@ -54,6 +54,19 @@ TEST(MatrixTest, CopyConstructor) {
   EXPECT_EQ(m2.get(1, 2), 6.0f);
 }
 
+TEST(MatrixTest, InitializerListConstructor) {
+  Matrix m = {
+    {1.0f, 2.0f, 3.0f},
+    {4.0f, 5.0f, 6.0f}
+  };
+  EXPECT_EQ(m.get(0), 1.0f);
+  EXPECT_EQ(m.get(1), 2.0f);
+  EXPECT_EQ(m.get(2), 3.0f);
+  EXPECT_EQ(m.get(3), 4.0f);
+  EXPECT_EQ(m.get(4), 5.0f);
+  EXPECT_EQ(m.get(5), 6.0f);
+}
+
 TEST(MatrixTest, Addition) {
   Matrix m1(2, 3);
   m1.set(0, 0, 1.0f);

@@ -3,33 +3,24 @@
 #include <stdexcept>
 #include <iostream>
 
-Matrix::Matrix(int r, int c) : rows(r), cols(c) {
-  this->data = new float[rows * cols];
-  assert(this->data != nullptr);
+Matrix::Matrix(int r, int c) : rows(r), cols(c), data(r*c) {}
 
-  // Initialize data to zero
-  for (int i = 0; i < rows * cols; i++) {
-    this->data[i] = 0.0f;
+Matrix::Matrix(const Matrix& m) : rows(m.getRows()), cols(m.getCols()), data(m.data) {}
+
+Matrix::Matrix(std::initializer_list<std::initializer_list<float>> list) {
+  this->rows = (int)list.size();
+  assert(this->rows > 0);
+
+  this->cols = (int)list.begin()->size();
+  this->data.resize(this->rows * this->cols);
+
+  int i = 0;
+  for(auto row : list) {
+    assert((int)row.size() == this->cols);
+    for(auto element : row) {
+      this->data[i++] = element;
+    }
   }
-}
-
-Matrix::Matrix(const Matrix& m) {
-  // Allocate memory for data
-  this->data = new float[m.getRows() * m.getCols()];
-  assert(this->data != nullptr);
-
-  // Copy dimensions
-  this->rows = m.getRows();
-  this->cols = m.getCols();
-
-  // Copy data
-  for (int i = 0; i < this->rows * this->cols; i++) {
-    this->data[i] = m.get(i);
-  }
-}
-
-Matrix::~Matrix() {
-  delete[] this->data;
 }
 
 Matrix Matrix::operator+(const Matrix &m) const {
@@ -142,4 +133,8 @@ int Matrix::getRows() const {
 
 int Matrix::getCols() const {
   return this->cols;
+}
+
+const float* Matrix::getData() const {
+  return this->data.data();
 }
