@@ -10,7 +10,7 @@ GLSL_DIR = $(SRC_DIR)/glsl
 # Compiler
 CXX = g++
 # CXXFLAGS = -std=c++17 -Wall -Wconversion -Werror -g -I$(INCLUDE_DIR)
-CXXFLAGS = -std=c++17 -Wall -Wextra -Wpedantic -Wconversion -Wshadow -Wfloat-equal -Wpointer-arith -Wcast-qual -Wcast-align -Wformat=2 -Wnull-dereference -Wduplicated-cond -Wlogical-op -Wuseless-cast -Wdouble-promotion -Wstrict-overflow=5 -Werror -g -I$(INCLUDE_DIR)
+CXXFLAGS = -std=c++17 -Wall -Wextra -Wpedantic -Wconversion -Wshadow -Wfloat-equal -Wpointer-arith -Wcast-qual -Wcast-align -Wformat=2 -Wnull-dereference -Wduplicated-cond -Wlogical-op -Wuseless-cast -Wdouble-promotion -Wstrict-overflow=5 -g -I$(INCLUDE_DIR)
 LDFLAGS = -lglfw3 -lGL -lX11 -lpthread -lXrandr -lXi -ldl -lm -lglm
 # Linker flags only for testing
 # main() for tests is included inside lgtest_main

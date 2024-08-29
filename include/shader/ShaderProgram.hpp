@@ -15,7 +15,7 @@ public:
     return shaderProgramID;
   }
 
-  void SetMat4(const char* name, const glm::mat4& mat);
+  void SetMat4(const char* name, const float* mat);
 
 protected:
   void create();

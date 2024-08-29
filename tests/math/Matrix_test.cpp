@@ -21,19 +21,6 @@ TEST(MatrixTest, CreateSetGet) {
   EXPECT_EQ(m.get(1, 0), 4.0f);
   EXPECT_EQ(m.get(1, 1), 5.0f);
   EXPECT_EQ(m.get(1, 2), 6.0f);
-
-  // set(index, value) test
-  m.set(0, 10.0f);
-  m.set(1, 12.0f);
-  m.set(5, 13.0f);
-
-  // get(index) test
-  EXPECT_EQ(m.get(0), 10.0f);
-  EXPECT_EQ(m.get(1), 12.0f);
-  EXPECT_EQ(m.get(2), 3.0f);
-  EXPECT_EQ(m.get(3), 4.0f);
-  EXPECT_EQ(m.get(4), 5.0f);
-  EXPECT_EQ(m.get(5), 13.0f);
 }
 
 TEST(MatrixTest, CopyConstructor) {
@@ -59,12 +46,12 @@ TEST(MatrixTest, InitializerListConstructor) {
     {1.0f, 2.0f, 3.0f},
     {4.0f, 5.0f, 6.0f}
   };
-  EXPECT_EQ(m.get(0), 1.0f);
-  EXPECT_EQ(m.get(1), 2.0f);
-  EXPECT_EQ(m.get(2), 3.0f);
-  EXPECT_EQ(m.get(3), 4.0f);
-  EXPECT_EQ(m.get(4), 5.0f);
-  EXPECT_EQ(m.get(5), 6.0f);
+  EXPECT_EQ(m.get(0, 0), 1.0f);
+  EXPECT_EQ(m.get(0, 1), 2.0f);
+  EXPECT_EQ(m.get(0, 2), 3.0f);
+  EXPECT_EQ(m.get(1, 0), 4.0f);
+  EXPECT_EQ(m.get(1, 1), 5.0f);
+  EXPECT_EQ(m.get(1, 2), 6.0f);
 }
 
 TEST(MatrixTest, Addition) {

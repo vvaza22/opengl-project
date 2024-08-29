@@ -21,9 +21,7 @@ public:
   int getCols() const;
   const float* getData() const;
 
-  void set(int index, float value);
   void set(int row, int col, float value);
-  float get(int index) const;
   float get(int row, int col) const;
 
 private:

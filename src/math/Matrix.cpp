@@ -12,14 +12,20 @@ Matrix::Matrix(std::initializer_list<std::initializer_list<float>> list) {
   assert(this->rows > 0);
 
   this->cols = (int)list.begin()->size();
+  assert(this->cols > 0);
+
   this->data.resize(this->rows * this->cols);
 
-  int i = 0;
+  // Populate the data vector in column-major order
+  int rowIndex = 0;
   for(auto row : list) {
     assert((int)row.size() == this->cols);
+    int colIndex = 0;
     for(auto element : row) {
-      this->data[i++] = element;
+      this->data[colIndex * this->rows + rowIndex] = element;
+      colIndex++;
     }
+    rowIndex++;
   }
 }
 
@@ -27,8 +33,10 @@ Matrix Matrix::operator+(const Matrix &m) const {
   assert(this->rows == m.getRows() && this->cols == m.getCols());
 
   Matrix result(this->rows, this->cols);
-  for(int i = 0; i < this->rows * this->cols; i++) {
-    result.set(i, this->get(i) + m.get(i));
+  for(int row=0; row<this->rows; row++) {
+    for(int col=0; col<this->cols; col++) {
+      result.set(row, col, this->get(row, col) + m.get(row, col));
+    }
   }
 
 	return result;
@@ -38,8 +46,10 @@ Matrix Matrix::operator-(const Matrix &m) const {
   assert(this->rows == m.getRows() && this->cols == m.getCols());
 
   Matrix result(this->rows, this->cols);
-  for(int i = 0; i < this->rows * this->cols; i++) {
-    result.set(i, this->get(i) - m.get(i));
+  for(int row=0; row<this->rows; row++) {
+    for(int col=0; col<this->cols; col++) {
+      result.set(row, col, this->get(row, col) - m.get(row, col));
+    }
   }
 
 	return result;
@@ -73,8 +83,10 @@ Matrix Matrix::operator*(const Matrix &m) const {
 Matrix Matrix::operator*(float scalar) const {
   Matrix result(this->rows, this->cols);
 
-  for(int i = 0; i < this->rows * this->cols; i++) {
-    result.set(i, this->get(i) * scalar);
+  for(int row=0; row<this->rows; row++) {
+    for(int col=0; col<this->cols; col++) {
+      result.set(row, col, this->get(row, col) * scalar);
+    }
   }
 
 	return result;
@@ -83,39 +95,27 @@ Matrix Matrix::operator*(float scalar) const {
 Matrix Matrix::operator/(float scalar) const {
   Matrix result(this->rows, this->cols);
 
-  for(int i = 0; i < this->rows * this->cols; i++) {
-    result.set(i, this->get(i) / scalar);
+  for(int row=0; row<this->rows; row++) {
+    for(int col=0; col<this->cols; col++) {
+      result.set(row, col, this->get(row, col) / scalar);
+    }
   }
 
 	return result;
-}
-
-void Matrix::set(int index, float value) {
-    if (index < 0 || index >= this->rows * this->cols) {
-        throw std::out_of_range("Index out of range");
-    }
-    data[index] = value;
 }
 
 void Matrix::set(int row, int col, float value) {
     if (row < 0 || row >= this->rows || col < 0 || col >= this->cols) {
         throw std::out_of_range("Row or column out of range");
     }
-    data[row * this->cols + col] = value;
-}
-
-float Matrix::get(int index) const {
-    if (index < 0 || index >= this->rows * this->cols) {
-        throw std::out_of_range("Index out of range");
-    }
-    return data[index];
+    data[col * this->rows + row] = value;
 }
 
 float Matrix::get(int row, int col) const {
     if (row < 0 || row >= this->rows || col < 0 || col >= this->cols) {
         throw std::out_of_range("Row or column out of range");
     }
-    return data[row * this->cols + col];
+    return data[col * this->rows + row];
 }
 
 void Matrix::print() const {
