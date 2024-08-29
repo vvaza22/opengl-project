@@ -48,8 +48,10 @@ FloatArray* filesystem::ReadFloatArray(const std::string& filePath) {
 		}
 
 		// Encapsulate the information in a FloatArray object
-		return new FloatArray(coordinates, array);
+		FloatArray* arr = new FloatArray(coordinates, array);
+		delete[] array;
 
+		return arr;
 	} catch(std::ifstream::failure& e) {
 		std::ostringstream errorMsg;
 		errorMsg << "Error: Could not read object file " << filePath << " " << e.what();

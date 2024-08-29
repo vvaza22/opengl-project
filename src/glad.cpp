@@ -207,7 +207,7 @@ static void free_exts(void) {
     if (exts_i != NULL) {
         int index;
         for(index = 0; index < num_exts_i; index++) {
-            free((char *)exts_i[index]);
+            free(exts_i[index]);
         }
         free((void *)exts_i);
         exts_i = NULL;

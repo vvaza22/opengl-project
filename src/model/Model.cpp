@@ -82,9 +82,9 @@ void Model::bindVertexBufferObject() {
 /**
  * Precondition: VBO is bound on GL_ARRAY_BUFFER
  */
-void Model::sendDataToVertexBufferObject(int length, const float* array) {
+void Model::sendDataToVertexBufferObject(int l, const float* a) {
   // GL_STATIC_DRAW because the data is accessed many times but never changed
-  glBufferData(GL_ARRAY_BUFFER, length * sizeof(float), array, GL_STATIC_DRAW);
+  glBufferData(GL_ARRAY_BUFFER, l * sizeof(float), a, GL_STATIC_DRAW);
 
   // Configure how the buffer data should be interpreted by vertex shader
   // In this simple case we are only passing one argument to the vertex shader

@@ -30,16 +30,16 @@ void InitProgram() {
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 }
 
-void WindowResizeCallback(GLFWwindow* window, int width, int height) {
-	glViewport(0, 0, width, height);
-}
+// void WindowResizeCallback(GLFWwindow* window, int width, int height) {
+// 	glViewport(0, 0, width, height);
+// }
 
 GLFWwindow* CreateWindow() {
 	//glfwGetPrimaryMonitor()
 	GLFWwindow* window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE, nullptr, nullptr);
 
 	// Handle window resize
-	glfwSetFramebufferSizeCallback(window, WindowResizeCallback);
+	// glfwSetFramebufferSizeCallback(window, WindowResizeCallback);
 
 	//glfwSetKeyCallback(window, key_callback);
 	//glfwSetCursorPosCallback(window, mouse_callback);  
@@ -80,7 +80,7 @@ void MainLoop(GLFWwindow* window) {
 	glm::mat4 model = glm::mat4(1.0f);
 	glm::mat4 projection = glm::mat4(1.0f);
 
-	projection = glm::perspective(glm::radians(45.0f), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 0.1f, 100.0f);
+	projection = glm::perspective(glm::radians(90.0f), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 0.1f, 100.0f);
 
 	float deltaTime = 0;
 	float lastFrame = 0;

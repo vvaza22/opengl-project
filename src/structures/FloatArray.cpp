@@ -1,8 +1,10 @@
 #include <structures/FloatArray.hpp>
 
-FloatArray::FloatArray(int length, float* array) {
-  this->length = length;
-  this->array = array;
+FloatArray::FloatArray(int l, float* a) : length(l) {
+  this->array = new float[l];
+  for (int i = 0; i < l; i++) {
+    this->array[i] = a[i];
+  }
 }
 
 FloatArray::~FloatArray() {
