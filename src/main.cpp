@@ -1,3 +1,4 @@
+// clang-format off
 #include <iostream>
 
 // OPENGL Libraries MUST START WITH GLAD
@@ -14,6 +15,7 @@
 #include <model/ModelFactory.hpp>
 #include <shader/ShaderFactory.hpp>
 #include <shader/ShaderProgram.hpp>
+#include <matrixslayer/MatrixFactory.hpp>
 
 const int   WINDOW_WIDTH  = 800;
 const int   WINDOW_HEIGHT = 600;
@@ -80,14 +82,12 @@ void MainLoop(GLFWwindow* window) {
   glEnable(GL_DEPTH_TEST);
   glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-  // Matrix model{
-  // 	{1.0f, 0.0f, 0.0f, 0.0f},
-  // 	{0.0f, 1.0f, 0.0f, 0.0f},
-  // 	{0.0f, 0.0f, -1.0f, 0.0f},
-  // 	{0.0f, 0.0f, 0.0f, 1.0f}
-  // };
-
-  glm::mat4 model = glm::mat4(1.0f);
+  matrixslayer::Mat model = matrixslayer::Matrix4f({
+    1.0f, 0.0f, 0.0f, 0.0f,
+    0.0f, 1.0f, 0.0f, 0.0f,
+    0.0f, 0.0f, 1.0f, 0.0f,
+    0.0f, 0.0f, 0.0f, 1.0f
+  });
 
   Matrix view{{1.0f, 0.0f, 0.0f, 0.0f},
               {0.0f, 1.0f, 0.0f, 0.0f},
@@ -126,11 +126,8 @@ void MainLoop(GLFWwindow* window) {
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    model =
-        glm::rotate(model, glm::radians(-1.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-
     program->use();
-    program->SetMat4("model", glm::value_ptr(model));
+    program->SetMat4("model", model.ptr());
     program->SetMat4("view", view.getData());
     program->SetMat4("projection", projection.getData());
     shape->draw();

@@ -50,3 +50,6 @@ CMakeUserPresets.json
 
 # Build directories
 build/
+
+# Git submodules
+external/

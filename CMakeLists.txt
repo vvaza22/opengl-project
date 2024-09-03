@@ -2,9 +2,13 @@ cmake_minimum_required(VERSION 3.22.1)
 
 # Set the project name
 project(opengl-project VERSION 1.0)
-
-# Project name
 set(PROJECT_NAME openglproject)
+
+# Add the submodule
+add_subdirectory(external/matrix-slayer)
+
+# Include directories from the submodule
+include_directories(${CMAKE_SOURCE_DIR}/external/matrix-slayer/include)
 
 # Recursively find all .cpp files in the src directory
 file(GLOB_RECURSE SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp)
@@ -45,6 +49,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     dl
     m
     glm
+	matrixslayer
 )
 
 # Copy src/glsl to the build directory
