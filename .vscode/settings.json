@@ -1,10 +1,7 @@
 {
-    "[cpp]": {
-        "editor.tabSize": 2,
-        "editor.insertSpaces": true
-    },
-    "[c]": {
-        "editor.tabSize": 2,
-        "editor.insertSpaces": true
-    }
+    "editor.tabSize": 2,
+    "editor.indentSize": "tabSize",
+    "editor.insertSpaces": true,
+    "editor.formatOnSave": true,
+    "files.insertFinalNewline": true
 }

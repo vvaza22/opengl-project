@@ -12,6 +12,7 @@
 #include <shader/ShaderFactory.hpp>
 #include <shader/ShaderProgram.hpp>
 #include <matrixslayer/MatrixFactory.hpp>
+#include <math/projections.hpp>
 
 const int   WINDOW_WIDTH  = 800;
 const int   WINDOW_HEIGHT = 600;
@@ -88,24 +89,11 @@ void MainLoop(GLFWwindow* window) {
   matrixslayer::Mat view = matrixslayer::Matrix4f({
     1.0f, 0.0f, 0.0f, 0.0f,
     0.0f, 1.0f, 0.0f, 0.0f,
-    0.0f, 0.0f, 1.0f, 2.0f,
+    0.0f, 0.0f, 1.0f,-2.0f,
     0.0f, 0.0f, 0.0f, 1.0f
   });
 
-  float fov     = 45.0f;
-  float tangent = std::tan(glm::radians(fov / 2.0f));
-  float far     = 100.0f;
-  float near    = 0.1f;
-  float C       = (-far - near) / (far - near);
-  float D       = (2.0f * far * near) / (far - near);
-  float d       = 1.0f / tangent;
-
-  matrixslayer::Mat projection = matrixslayer::Matrix4f({
-    d / ASPECT_RATIO, 0.0f, 0.0f, 0.0f,
-    0.0f            , d   , 0.0f, 0.0f,
-    0.0f            , 0.0f, C   , D   ,
-    0.0f            , 0.0f, 1.0f, 1.0f
-  });
+  matrixslayer::Mat projection = math::perspective(90.0f, ASPECT_RATIO, 0.1f, 100.0f); 
   
   while (!glfwWindowShouldClose(window)) {
     // float currentFrame = static_cast<float>(glfwGetTime());
