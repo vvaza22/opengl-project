@@ -13,6 +13,7 @@
 #include <shader/ShaderProgram.hpp>
 #include <matrixslayer/MatrixFactory.hpp>
 #include <math/projections.hpp>
+#include <math/rotations.hpp>
 
 const int   WINDOW_WIDTH  = 800;
 const int   WINDOW_HEIGHT = 600;
@@ -86,6 +87,9 @@ void MainLoop(GLFWwindow* window) {
     0.0f, 0.0f, 0.0f, 1.0f
   });
 
+  // Rotate object around y-axis by 1 degrees every frame
+  matrixslayer::Mat rotation = math::rotationY(1.0f);
+
   matrixslayer::Mat view = matrixslayer::Matrix4f({
     1.0f, 0.0f, 0.0f, 0.0f,
     0.0f, 1.0f, 0.0f, 0.0f,
@@ -104,6 +108,8 @@ void MainLoop(GLFWwindow* window) {
 
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    model = rotation * model;
 
     program->use();
     program->SetMat4("model", model.ptr());
