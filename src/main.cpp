@@ -7,10 +7,6 @@
 
 #include <camera/Camera.hpp>
 #include <cmath>
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-#include <math/Matrix.hpp>
 #include <model/Model.hpp>
 #include <model/ModelFactory.hpp>
 #include <shader/ShaderFactory.hpp>
@@ -89,12 +85,14 @@ void MainLoop(GLFWwindow* window) {
     0.0f, 0.0f, 0.0f, 1.0f
   });
 
-  Matrix view{{1.0f, 0.0f, 0.0f, 0.0f},
-              {0.0f, 1.0f, 0.0f, 0.0f},
-              {0.0f, 0.0f, 1.0f, 2.0f},
-              {0.0f, 0.0f, 0.0f, 1.0f}};
+  matrixslayer::Mat view = matrixslayer::Matrix4f({
+    1.0f, 0.0f, 0.0f, 0.0f,
+    0.0f, 1.0f, 0.0f, 0.0f,
+    0.0f, 0.0f, 1.0f, 2.0f,
+    0.0f, 0.0f, 0.0f, 1.0f
+  });
 
-  float fov     = 90.0f;
+  float fov     = 45.0f;
   float tangent = std::tan(glm::radians(fov / 2.0f));
   float far     = 100.0f;
   float near    = 0.1f;
@@ -102,20 +100,13 @@ void MainLoop(GLFWwindow* window) {
   float D       = (2.0f * far * near) / (far - near);
   float d       = 1.0f / tangent;
 
-  Matrix projection = {{d / ASPECT_RATIO, 0.0f, 0.0f, 0.0f},
-                       {0.0f, d, 0.0f, 0.0f},
-                       {0.0f, 0.0f, C, D},
-                       {0.0f, 0.0f, 1.0f, 0.0f}};
-
-  // glm::mat4 projection = glm::mat4(1.0f);
-
-  // model = glm::rotate(model, glm::radians(-5.0f), glm::vec3(1.0f, 0.0f,
-  // 0.0f)); projection = glm::perspective(glm::radians(45.0f),
-  // (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 0.1f, 100.0f);
-
-  // float deltaTime = 0;
-  // float lastFrame = 0;
-
+  matrixslayer::Mat projection = matrixslayer::Matrix4f({
+    d / ASPECT_RATIO, 0.0f, 0.0f, 0.0f,
+    0.0f            , d   , 0.0f, 0.0f,
+    0.0f            , 0.0f, C   , D   ,
+    0.0f            , 0.0f, 1.0f, 1.0f
+  });
+  
   while (!glfwWindowShouldClose(window)) {
     // float currentFrame = static_cast<float>(glfwGetTime());
     // deltaTime = currentFrame - lastFrame;
@@ -128,8 +119,8 @@ void MainLoop(GLFWwindow* window) {
 
     program->use();
     program->SetMat4("model", model.ptr());
-    program->SetMat4("view", view.getData());
-    program->SetMat4("projection", projection.getData());
+    program->SetMat4("view", view.ptr());
+    program->SetMat4("projection", projection.ptr());
     shape->draw();
 
     glfwSwapBuffers(window);
