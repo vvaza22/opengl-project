@@ -88,7 +88,7 @@ void MainLoop(GLFWwindow* window) {
   });
 
   // Rotate object around y-axis by 1 degrees every frame
-  matrixslayer::Mat rotation = math::rotationY(1.0f);
+  matrixslayer::Mat rotation = math::rotationY(math::toRadians(1.0f));
 
   matrixslayer::Mat view = matrixslayer::Matrix4f({
     1.0f, 0.0f, 0.0f, 0.0f,
