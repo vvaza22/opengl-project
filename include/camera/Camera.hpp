@@ -7,7 +7,9 @@ enum Direction {
   FORWARD,
   BACKWARD,
   LEFT,
-  RIGHT
+  RIGHT,
+  UP,
+  DOWN
 };
 
 class Camera {
@@ -21,6 +23,7 @@ private:
   // Vectors that describe how camera can move
   matrixslayer::Vec front; // If you follow this vector, you will move forward
   matrixslayer::Vec right; // If you follow this vector, you will move right
+  matrixslayer::Vec up; // If you follow this vector, you will move up
 
   // What point the camera is looking at
   matrixslayer::Vec target;

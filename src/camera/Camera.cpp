@@ -5,17 +5,13 @@ const float SPEED = 2.5f;
 Camera::Camera(const matrixslayer::Vec& cameraPosition) {
   position = cameraPosition;
 
-  // Movement vectors
-  front = matrixslayer::Vec({0.0f, 0.0f, -1.0f});
-  right = matrixslayer::Vec({1.0f, 0.0f, 0.0f});
+  // Initially camera is looking down the negative z-axis
+  target = position + matrixslayer::Vec({0.0f, 0.0f, -1.0f});
 
   updateCameraVectors();
 }
 
 void Camera::updateCameraVectors() {
-  // Camera is looking down the negative z-axis initially
-  target = position + front;
-
   // Build coordinate axes for camera
   matrixslayer::Vec cameraZ = position - target;
 
@@ -28,6 +24,11 @@ void Camera::updateCameraVectors() {
   xAxisNorm = cameraX / cameraX.length();
   yAxisNorm = cameraY / cameraY.length();
   zAxisNorm = cameraZ / cameraZ.length();
+
+  // Update front, right, and up vectors
+  front = -zAxisNorm;
+  right = xAxisNorm;
+  up = yAxisNorm;
 }
 
 matrixslayer::Mat Camera::view() const {
@@ -62,6 +63,12 @@ void Camera::ProcessKeyboard(Direction direction, float deltaTime) {
     position = position + right * velocity;
   if (direction == LEFT)
     position = position - right * velocity;
+  if (direction == UP)
+    position = position + up * velocity;
+  if (direction == DOWN)
+    position = position - up * velocity;
+
+  target = position + front;
 
   updateCameraVectors();
 }
