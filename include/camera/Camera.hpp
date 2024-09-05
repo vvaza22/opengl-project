@@ -17,6 +17,7 @@ public:
   Camera(const matrixslayer::Vec& cameraPosition);
   matrixslayer::Mat view() const;
   void ProcessKeyboard(Direction direction, float deltaTime);
+  void ProcessMouseMovement(float xoffset, float yoffset);
 private:
   matrixslayer::Vec position;
 
@@ -25,13 +26,14 @@ private:
   matrixslayer::Vec right; // If you follow this vector, you will move right
   matrixslayer::Vec up; // If you follow this vector, you will move up
 
-  // What point the camera is looking at
-  matrixslayer::Vec target;
-
   // Normalized coordinate axes for camera
   matrixslayer::Vec xAxisNorm;
   matrixslayer::Vec yAxisNorm;
   matrixslayer::Vec zAxisNorm;
+
+  // Mouse movement up and down
+  float pitchRadians;
+  float yawRadians;
 
   // Uses Gram-Schmidt process to create coordinate axes for camera
   void updateCameraVectors();

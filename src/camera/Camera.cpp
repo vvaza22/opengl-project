@@ -1,19 +1,32 @@
 #include <camera/Camera.hpp>
+#include <math/utils.hpp>
+#include <iostream>
+#include <cmath>
 
 const float SPEED = 2.5f;
+const float SENSITIVITY = 0.1f;
 
 Camera::Camera(const matrixslayer::Vec& cameraPosition) {
   position = cameraPosition;
 
   // Initially camera is looking down the negative z-axis
-  target = position + matrixslayer::Vec({0.0f, 0.0f, -1.0f});
+  pitchRadians = 0.0f;
+  yawRadians = -90.0f;
 
   updateCameraVectors();
 }
 
 void Camera::updateCameraVectors() {
+  // Calculate new front vector
+  front = {
+    cosf(math::toRadians(yawRadians)) * cosf(math::toRadians(pitchRadians)),
+    sinf(math::toRadians(pitchRadians)),
+    sinf(math::toRadians(yawRadians)) * cosf(math::toRadians(pitchRadians))
+  };
+  // The length of front vector is 1(this is required for Gram-Schmidt process)
+
   // Build coordinate axes for camera
-  matrixslayer::Vec cameraZ = position - target;
+  matrixslayer::Vec cameraZ = -front;
 
   // Gram-Schmidt process
   matrixslayer::Vec worldUp = {0.0f, 1.0f, 0.0f};
@@ -26,7 +39,6 @@ void Camera::updateCameraVectors() {
   zAxisNorm = cameraZ / cameraZ.length();
 
   // Update front, right, and up vectors
-  front = -zAxisNorm;
   right = xAxisNorm;
   up = yAxisNorm;
 }
@@ -68,7 +80,22 @@ void Camera::ProcessKeyboard(Direction direction, float deltaTime) {
   if (direction == DOWN)
     position = position - up * velocity;
 
-  target = position + front;
+  updateCameraVectors();
+}
+
+void Camera::ProcessMouseMovement(float xoffset, float yoffset) {
+  xoffset *= SENSITIVITY;
+  yoffset *= SENSITIVITY;
+
+  pitchRadians += yoffset;
+  yawRadians += xoffset;
+
+
+  // Restrict pitch
+  if (pitchRadians > 89.0f)
+    pitchRadians = 89.0f;
+  if (pitchRadians < -89.0f)
+    pitchRadians = -89.0f;
 
   updateCameraVectors();
 }

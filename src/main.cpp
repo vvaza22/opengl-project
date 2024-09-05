@@ -21,7 +21,11 @@ const int   WINDOW_HEIGHT = 600;
 const char* WINDOW_TITLE  = "MY AMAZING WINDOW";
 const float ASPECT_RATIO  = (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT;
 
-matrixslayer::Vector cameraPosition = {0.0f, 0.0f, 2.0f};
+// Ugly global variables
+matrixslayer::Vector cameraStartingPosition = {0.0f, 0.0f, 2.0f};
+Camera camera(cameraStartingPosition);
+float lastX, lastY;
+bool firstMouse = true;
 
 void InitProgram() {
   // Initialize GLFW
@@ -39,17 +43,39 @@ void WindowResizeCallback(GLFWwindow* window, int width, int height) {
   glViewport(0, 0, width, height);
 }
 
-GLFWwindow*
-CreateWindow() {
-  // glfwGetPrimaryMonitor()
+void mouseCallback(GLFWwindow* window, double xpos, double ypos) {
+
+  // Cast to float
+  float x = static_cast<float>(xpos);
+  float y = static_cast<float>(ypos);
+
+  if (firstMouse) {
+    lastX = x;
+    lastY = y;
+    firstMouse = false;
+  }
+
+  // When I move the mouse to the right, xpos increases
+  float xoffset = x - lastX;
+  // When I move the mouse up, ypos increases(since top-left corner is (0, 0))
+  float yoffset = lastY - y;
+
+  lastX = x;
+  lastY = y;
+
+  camera.ProcessMouseMovement(xoffset, yoffset);
+}
+
+GLFWwindow* CreateWindow() {
+  // glfwGetPrimaryMonitor() to make window full screen
   GLFWwindow* window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE, nullptr, nullptr);
 
   // Handle window resize
   glfwSetFramebufferSizeCallback(window, WindowResizeCallback);
 
   // glfwSetKeyCallback(window, key_callback);
-  // glfwSetCursorPosCallback(window, mouse_callback);
-  // glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+  glfwSetCursorPosCallback(window, mouseCallback);
+  glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
   return window;
 }
@@ -74,10 +100,8 @@ void processInput(GLFWwindow* window, Camera* camera, float deltaTime) {
 }
 
 
-void MainLoop(GLFWwindow* window) {
-  // glm::vec3 cameraPosition = glm::vec3(0.0f, 0.0f, 3.0f);
-  // Camera camera(cameraPosition);
 
+void MainLoop(GLFWwindow* window) {
   ShaderFactory shaderFactory;
   ModelFactory  modelFactory;
 
@@ -121,9 +145,6 @@ void MainLoop(GLFWwindow* window) {
   });
 
   matrixslayer::Mat projection = math::perspective(90.0f, ASPECT_RATIO, 0.1f, 100.0f); 
-
-  // Camera
-  Camera camera(cameraPosition);
 
   float deltaTime = 0.0f;
   float lastFrame = 0.0f;
