@@ -1,9 +1,7 @@
-#ifndef _Camera_
-#define _Camera_
+#pragma once
 
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
+#include <matrixslayer/Vector.hpp>
+#include <matrixslayer/MatrixFactory.hpp>
 
 enum Direction {
   FORWARD,
@@ -14,14 +12,24 @@ enum Direction {
 
 class Camera {
 public:
-  Camera(const glm::vec3& pos);
-  glm::mat4 GetViewMatrix() const;
+  Camera(const matrixslayer::Vec& cameraPosition);
+  matrixslayer::Mat view() const;
   void ProcessKeyboard(Direction direction, float deltaTime);
 private:
-  glm::vec3 position;
-  glm::vec3 front;
-  glm::vec3 up;
-  glm::vec3 right;
-};
+  matrixslayer::Vec position;
 
-#endif
+  // Vectors that describe how camera can move
+  matrixslayer::Vec front; // If you follow this vector, you will move forward
+  matrixslayer::Vec right; // If you follow this vector, you will move right
+
+  // What point the camera is looking at
+  matrixslayer::Vec target;
+
+  // Normalized coordinate axes for camera
+  matrixslayer::Vec xAxisNorm;
+  matrixslayer::Vec yAxisNorm;
+  matrixslayer::Vec zAxisNorm;
+
+  // Uses Gram-Schmidt process to create coordinate axes for camera
+  void updateCameraVectors();
+};

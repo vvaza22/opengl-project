@@ -12,6 +12,7 @@
 #include <shader/ShaderFactory.hpp>
 #include <shader/ShaderProgram.hpp>
 #include <matrixslayer/MatrixFactory.hpp>
+#include <matrixslayer/Vector.hpp>
 #include <math/projections.hpp>
 #include <math/rotations.hpp>
 
@@ -19,6 +20,8 @@ const int   WINDOW_WIDTH  = 800;
 const int   WINDOW_HEIGHT = 600;
 const char* WINDOW_TITLE  = "MY AMAZING WINDOW";
 const float ASPECT_RATIO  = (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT;
+
+matrixslayer::Vector cameraPosition = {0.0f, 0.0f, 2.0f};
 
 void InitProgram() {
   // Initialize GLFW
@@ -66,6 +69,7 @@ void processInput(GLFWwindow* window, Camera* camera, float deltaTime) {
     camera->ProcessKeyboard(RIGHT, deltaTime);
 }
 
+
 void MainLoop(GLFWwindow* window) {
   // glm::vec3 cameraPosition = glm::vec3(0.0f, 0.0f, 3.0f);
   // Camera camera(cameraPosition);
@@ -87,8 +91,23 @@ void MainLoop(GLFWwindow* window) {
     0.0f, 0.0f, 0.0f, 1.0f
   });
 
+  matrixslayer::Mat t = matrixslayer::Matrix4f({
+    1.0f, 0.0f, 0.0f, 5.0f,
+    0.0f, 1.0f, 0.0f, 1.0f,
+    0.0f, 0.0f, 1.0f, -3.0f,
+    0.0f, 0.0f, 0.0f, 1.0f
+  });
+
+  matrixslayer::Mat model2 = matrixslayer::Matrix4f({
+    1.0f, 0.0f, 0.0f, 0.0f,
+    0.0f, 1.0f, 0.0f, 0.0f,
+    0.0f, 0.0f, 1.0f, 0.0f,
+    0.0f, 0.0f, 0.0f, 1.0f
+  });
+
   // Rotate object around y-axis by 1 degrees every frame
-  matrixslayer::Mat rotation = math::rotationZ(math::toRadians(1.0f));
+  matrixslayer::Mat rotation = math::rotationX(math::toRadians(1.0f));
+  matrixslayer::Mat rotation2 = math::rotationY(math::toRadians(2.0f));
 
   matrixslayer::Mat view = matrixslayer::Matrix4f({
     1.0f, 0.0f, 0.0f, 0.0f,
@@ -98,23 +117,36 @@ void MainLoop(GLFWwindow* window) {
   });
 
   matrixslayer::Mat projection = math::perspective(90.0f, ASPECT_RATIO, 0.1f, 100.0f); 
+
+  // Camera
+  Camera camera(cameraPosition);
+
+  float deltaTime = 0.0f;
+  float lastFrame = 0.0f;
   
   while (!glfwWindowShouldClose(window)) {
-    // float currentFrame = static_cast<float>(glfwGetTime());
-    // deltaTime = currentFrame - lastFrame;
-    // lastFrame = currentFrame;
+    float currentFrame = static_cast<float>(glfwGetTime());
+    deltaTime = currentFrame - lastFrame;
+    lastFrame = currentFrame;
 
-    // processInput(window, &camera, deltaTime);
+    processInput(window, &camera, deltaTime);
 
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     model = rotation * model;
+    model2 = rotation2 * model2;
+
+    matrixslayer::Mat lookAt = camera.view();
+    matrixslayer::Mat result = t * model2;
 
     program->use();
     program->SetMat4("model", model.ptr());
-    program->SetMat4("view", view.ptr());
+    program->SetMat4("view", lookAt.ptr());
     program->SetMat4("projection", projection.ptr());
+    shape->draw();
+
+    program->SetMat4("model", result.ptr());
     shape->draw();
 
     glfwSwapBuffers(window);
