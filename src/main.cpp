@@ -105,8 +105,12 @@ void MainLoop(GLFWwindow* window) {
   ShaderFactory shaderFactory;
   ModelFactory  modelFactory;
 
-  ShaderProgram* program = shaderFactory.CreateShaderProgram(
-      "glsl/wnormal/vertex.glsl", "glsl/wnormal/fragment.glsl");
+  ShaderProgram* program = shaderFactory.CreateShaderProgram("glsl/wnormal/vertex.glsl", "glsl/wnormal/fragment.glsl");
+  ShaderProgram* programl = shaderFactory.CreateShaderProgram("glsl/light/vertex.glsl", "glsl/light/fragment.glsl");
+
+  // ShaderProgram* program = shaderFactory.CreateShaderProgram(
+  //     "glsl/test/vertex.glsl", "glsl/test/fragment.glsl");
+
   Model* shape = modelFactory.CreateModel("data/wnormal/cube.obj");
 
   glEnable(GL_DEPTH_TEST);
@@ -146,6 +150,11 @@ void MainLoop(GLFWwindow* window) {
 
   matrixslayer::Mat projection = math::perspective(90.0f, ASPECT_RATIO, 0.1f, 100.0f); 
 
+  matrixslayer::Vec lightColor = {1.0f, 1.0f, 1.0f};
+  matrixslayer::Vec objectColor = {1.0f, 0.5f, 0.31f};
+  matrixslayer::Vec objectColor2 = {0.0f, 0.0f, 0.55f};
+
+
   float deltaTime = 0.0f;
   float lastFrame = 0.0f;
   
@@ -154,6 +163,15 @@ void MainLoop(GLFWwindow* window) {
     deltaTime = currentFrame - lastFrame;
     lastFrame = currentFrame;
 
+
+    matrixslayer::Vec lightPosition = {10*cos(currentFrame), 2.0f, sin(currentFrame)};
+    matrixslayer::Mat lightModel = matrixslayer::Matrix4f({
+      0.3f, 0.0f, 0.0f, lightPosition[0],
+      0.0f, 0.3f, 0.0f, lightPosition[1],
+      0.0f, 0.0f, 0.3f, lightPosition[2],
+      0.0f, 0.0f, 0.0f, 1.0f
+    });
+
     processInput(window, &camera, deltaTime);
 
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -161,17 +179,30 @@ void MainLoop(GLFWwindow* window) {
 
     model = rotation * model;
     model2 = rotation2 * model2;
+    matrixslayer::Mat objModel2 = t * model2;
 
     matrixslayer::Mat lookAt = camera.view();
-    matrixslayer::Mat result = t * model2;
 
     program->use();
+
+    // Light properties
+    program->SetVec3("lightColor", lightColor.ptr());
+    program->SetVec3("lightPosition", lightPosition.ptr());
+    program->SetVec3("objectColor", objectColor.ptr());
     program->SetMat4("model", model.ptr());
     program->SetMat4("view", lookAt.ptr());
     program->SetMat4("projection", projection.ptr());
     shape->draw();
 
-    program->SetMat4("model", result.ptr());
+    program->SetVec3("objectColor", objectColor2.ptr());
+    program->SetMat4("model", objModel2.ptr());
+    shape->draw();
+
+    programl->use();
+    programl->SetVec3("objectColor", lightColor.ptr());
+    programl->SetMat4("model", lightModel.ptr());
+    programl->SetMat4("view", lookAt.ptr());
+    programl->SetMat4("projection", projection.ptr());
     shape->draw();
 
     glfwSwapBuffers(window);

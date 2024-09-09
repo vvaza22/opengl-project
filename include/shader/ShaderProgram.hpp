@@ -16,6 +16,7 @@ public:
   }
 
   void SetMat4(const char* name, const float* mat);
+  void SetVec3(const char* name, const float* vec);
 
 protected:
   void create();

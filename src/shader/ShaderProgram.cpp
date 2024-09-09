@@ -32,6 +32,10 @@ void ShaderProgram::SetMat4(const char* name, const float* mat) {
   glUniformMatrix4fv(getLoc(name), 1, GL_FALSE, mat);
 }
 
+void ShaderProgram::SetVec3(const char* name, const float* vec) {
+  glUniform3fv(getLoc(name), 1, vec);
+}
+
 GLint ShaderProgram::getLoc(const char* name) const {
   return glGetUniformLocation(shaderProgramID, name);
 }
