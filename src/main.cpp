@@ -107,7 +107,7 @@ void MainLoop(GLFWwindow* window) {
 
   ShaderProgram* program = shaderFactory.CreateShaderProgram(
       "glsl/test/vertex.glsl", "glsl/test/fragment.glsl");
-  Model* shape = modelFactory.CreateModel("data/model/cube.obj");
+  Model* shape = modelFactory.CreateModel("data/wnormal/cube.obj");
 
   glEnable(GL_DEPTH_TEST);
   glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);

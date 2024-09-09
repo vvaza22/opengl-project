@@ -1,8 +1,8 @@
 #include <model/Model.hpp>
 #include <iostream>
 
-Model::Model(FloatArray* array) {
-  length = array->Length();
+Model::Model(Mesh* mesh) {
+  length = mesh->size();
 
   // Vertex Array Object (VAO) remembers how calls are made to VBO
   // next time we need to use the model, we can just bind the VAO and VBO will be automatically bound
@@ -18,7 +18,7 @@ Model::Model(FloatArray* array) {
   bindVertexBufferObject();
 
   // Send the data to GPU
-  sendDataToVertexBufferObject(array->Length(), array->Ptr());
+  sendDataToVertexBufferObject(mesh->size(), mesh->ptr());
 
   // Safe because vertex attributes are already bound
   unbindVertexBufferObject();

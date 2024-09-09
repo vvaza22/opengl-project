@@ -2,11 +2,11 @@
 #define _Model_
 
 #include <glad/glad.h>
-#include <structures/FloatArray.hpp>
+#include <mesh/Mesh.hpp>
 
 class Model {
 public:
-  Model(FloatArray* array);
+  Model(Mesh* mesh);
   ~Model();
 
   GLuint VertexArrayID() const {
