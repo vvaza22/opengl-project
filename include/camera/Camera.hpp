@@ -18,6 +18,9 @@ public:
   matrixslayer::Mat view() const;
   void ProcessKeyboard(Direction direction, float deltaTime);
   void ProcessMouseMovement(float xoffset, float yoffset);
+  matrixslayer::Vec getPosition() const {
+    return position;
+  };
 private:
   matrixslayer::Vec position;
 

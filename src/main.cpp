@@ -164,7 +164,7 @@ void MainLoop(GLFWwindow* window) {
     lastFrame = currentFrame;
 
 
-    matrixslayer::Vec lightPosition = {10*cos(currentFrame), 2.0f, sin(currentFrame)};
+    matrixslayer::Vec lightPosition = {1.0f, 2.0f, 1.0f};
     matrixslayer::Mat lightModel = matrixslayer::Matrix4f({
       0.3f, 0.0f, 0.0f, lightPosition[0],
       0.0f, 0.3f, 0.0f, lightPosition[1],
@@ -189,6 +189,7 @@ void MainLoop(GLFWwindow* window) {
     program->SetVec3("lightColor", lightColor.ptr());
     program->SetVec3("lightPosition", lightPosition.ptr());
     program->SetVec3("objectColor", objectColor.ptr());
+    program->SetVec3("cameraPosition", camera.getPosition().ptr());
     program->SetMat4("model", model.ptr());
     program->SetMat4("view", lookAt.ptr());
     program->SetMat4("projection", projection.ptr());
