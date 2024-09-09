@@ -106,11 +106,11 @@ void MainLoop(GLFWwindow* window) {
   ModelFactory  modelFactory;
 
   ShaderProgram* program = shaderFactory.CreateShaderProgram(
-      "glsl/test/vertex.glsl", "glsl/test/fragment.glsl");
+      "glsl/wnormal/vertex.glsl", "glsl/wnormal/fragment.glsl");
   Model* shape = modelFactory.CreateModel("data/wnormal/cube.obj");
 
   glEnable(GL_DEPTH_TEST);
-  glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+  // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
   matrixslayer::Mat model = matrixslayer::Matrix4f({
     1.0f, 0.0f, 0.0f, 0.0f,

@@ -19,6 +19,20 @@ public:
     }
     return new Mesh(data);
   }
+
+  Mesh* buildWithNormals() const {
+    std::vector<float> data;
+    for (const auto& vertex : this->vertices) {
+      data.push_back(vertex.x);
+      data.push_back(vertex.y);
+      data.push_back(vertex.z);
+      data.push_back(vertex.nx);
+      data.push_back(vertex.ny);
+      data.push_back(vertex.nz);
+    }
+    return new Mesh(data);
+  }
+
 private:
   std::vector<Vertex> vertices;
 };

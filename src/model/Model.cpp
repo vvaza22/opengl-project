@@ -40,7 +40,7 @@ void Model::draw() {
   bindVertexArrayObject();
 
   // Calculate how many vertices there are (assuming each vertex needs 3 coordinates)
-  int vertices = length / 3;
+  int vertices = length / 6;
 
   // Draw vertices from vertex arary
   // Each element in vertex array is a collection of vertex attributes(we have only 1 vertex attribute in this case)
@@ -90,9 +90,11 @@ void Model::sendDataToVertexBufferObject(int l, const float* a) {
   // In this simple case we are only passing one argument to the vertex shader
 
   // Pass vec3 as attribute 0, each vec3 denotes vertex coordinates in 3d space
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*) 0);
-  // Enable attribute 0
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
   glEnableVertexAttribArray(0);
+
+  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+  glEnableVertexAttribArray(1);
 }
 
 void Model::unbindVertexBufferObject() {

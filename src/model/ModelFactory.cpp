@@ -5,7 +5,7 @@
 
 Model* ModelFactory::CreateModel(const std::string& path) {
   MeshBuilder* builder = filesystem::ReadObject(path);
-  Mesh* mesh = builder->build();
+  Mesh* mesh = builder->buildWithNormals();
 
   // Copies array to GPU
   Model* model = new Model(mesh);
